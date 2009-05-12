@@ -1,0 +1,163 @@
+h1. Disqussion - A library for using the Disqus web API.
+
+* "http://github.com/blowmage/disqussion/wikis":http://github.com/blowmage/disqussion/wikis
+* "mike@blowmage.com":mailto:mike@blowmage.com
+
+Copyright:: (C) 2009 "Mike Moore":mailto:mike@blowmage.com
+License:: Distributes under the same terms as Ruby
+
+h2. Description
+
+Disqussion is a library for using the "Disqus API":http://wiki.disqus.net/API.
+
+h2. Install
+
+<pre><code>[sudo] gem install disqussion</code></pre>
+
+or
+
+<pre><code>[sudo] gem sources -a http://gems.github.com
+[sudo] gem install blowmage-disqussion</code></pre>
+
+or
+
+<pre><code>git clone git://github.com/blowmage/disqussion.git
+cd disqussion
+gem build disqussion.gemspec
+[sudo] gem install disqussion-0.1.0.gem</code></pre>
+
+h2. Feeling your way around Disqussion
+
+Disqussion uses the Disqus terminology of Forums, Threads, and Posts.
+For the most typical use a Forum is your blog, a Thread is a blog entry, and a post is a comment.
+
+h2. Examples
+
+h3. Create Disqus Session
+
+You need a Disqus account and your Disqus API key to use the Disqussion library.
+You can retrieve your Disqus API key here: http://disqus.com/api/get_my_key/
+
+<pre><code>require 'disqussion'
+
+disqus = Disqussion.new 'YWxlaWRzdXRoMzhlbzdydGJna3VhZGpidGdvYThlcnk3YnRvZXVyeWIgb2FlndTh'</code></pre>
+
+Or, you can put your Disqus key in ~./disqus_key and Disqussion will find and use it for you automagically.
+The only text in the ~./disqus_key file should be your api key.
+
+<pre><code>require 'disqussion'
+
+disqus = Disqussion.new</code></pre>
+
+Disqussion#new actually retrieves a Disqussion::Session object.
+You can call Disqussion::Session#new directly if you like, but Disqussion#new is there to save you from typing more than you need. :)
+
+h3. Finding your Forums
+
+Disqussion lazilly retrieves all the Forums you are allowed to access and keeps them in Session#forums.
+Session#forums is an array of Disqus::Forum objects.
+
+<pre><code>require 'disqussion'
+
+puts "My Disqus Sites:"
+Disqussion.new.forums.each do |forum|
+  puts "  forum: #{forum.id} (#{forum.shortname}) - #{forum.name}"
+end</code></pre>
+
+If you want to find a specific Forum you can use the following helper methods added to Session.forums array.
+
+<pre><code>require 'disqussion'
+
+disqus     = Disqussion.new
+rubiverse  = disqus.forums.find_by_id('123456')
+blowmage   = disqus.forums.find_by_shortname('blowmage')</code></pre>
+
+Although the easier way is to use the Session#[] helper passing in either the forum ID or the shortname.
+
+<pre><code>require 'disqussion'
+
+disqus     = Disqussion.new
+rubiverse  = disqus['123456']
+blowmage   = disqus['blowmage']</code></pre>
+
+h3. Finding your Threads
+
+Disqussion lazilly retrieves all the Threads on your Forum.
+Forum#threads is an array of Disqus::Thread objects.
+
+<pre><code>require 'disqussion'
+
+puts "My Blog Entries:"
+Disqussion.new['blowmage'].threads.each do |thread|
+  puts "  thread: #{thread.id} (#{thread.slug}) - #{thread.title}"
+end</code></pre>
+
+If you want to find a specific Thread you can use the following helper methods added to Forum.threads array.
+
+<pre><code>require 'disqussion'
+
+disqus       = Disqussion.new
+blowmage     = disqus['blowmage']
+random_page  = blowmage.threads.find_by_id('345678')
+another_page = blowmage.threads.find_by_slug('announcing-disqussion')</code></pre>
+
+Although the easier way is to use the Forum#[] helper passing in either the thread ID or the slug.
+
+<pre><code>require 'disqussion'
+
+disqus       = Disqussion.new
+blowmage     = disqus['blowmage']
+random_page  = blowmage['345678']
+another_page = blowmage['announcing-disqussion']</code></pre>
+
+h3. Finding your Posts
+
+Disqussion lazilly retrieves all the Posts on your Thread.
+Thread#posts is an array of Disqus::Post objects.
+
+<pre><code>require 'disqussion'
+
+puts "My Blog Entry Comments:"
+Disqussion.new['blowmage']['announcing-disqussion'].posts.each do |post|
+  puts "  post: #{post.id} (#{post.created_at}) - #{post.author.name}"
+  puts "  #{post.message}\n"
+end</code></pre>
+
+If you want to find a specific Post you can use the following helper method added to Thread.posts array.
+
+<pre><code>require 'disqussion'
+
+disqus   = Disqussion.new
+blowmage = disqus['blowmage']
+page     = blowmage['announcing-disqussion']
+comment  = page.posts.find_by_id('567890')</code></pre>
+
+Although the easier way is to use the Thread#[] helper passing in post ID.
+
+<pre><code>require 'disqussion'
+
+disqus   = Disqussion.new
+blowmage = disqus['blowmage']
+page     = blowmage['announcing-disqussion']
+comment  = page.posts['567890']</code></pre>
+
+h3. Working with Forums
+
+TODO: write this
+
+h3. Working with Threads
+
+TODO: write this
+
+h3. Working with Posts
+
+TODO: write this
+
+h3. Working with Authors
+
+TODO: write this
+
+h2. Calling the Disqus Web API Directly
+
+You can call the Disqus web API directly using Disqussion::API instead of using the Disqussion Forum, Thread, Post, and Author objects.
+You can find more information on the class documentation here.
