@@ -34,6 +34,10 @@ module Disqussion
       forum
     end
 
+    def inspect
+      "#<#{self.class}:#{self.object_id}>"
+    end
+
     private
 
     def default_hash

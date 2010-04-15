@@ -87,6 +87,10 @@ module Disqussion
       thread
     end
 
+    def inspect
+      "#<#{self.class}:#{self.object_id} (#{self.id}) #{self.shortname}>"
+    end
+
     private
 
     def default_hash

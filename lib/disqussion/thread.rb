@@ -95,6 +95,10 @@ module Disqussion
       posts.find_all {|t| t.parent_post == post.id }
     end
 
+    def inspect
+      "#<#{self.class}:#{self.object_id} (#{self.id}) #{self.title}>"
+    end
+
     private
 
     def default_hash
