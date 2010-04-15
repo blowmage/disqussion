@@ -1,6 +1,6 @@
 module Disqussion
-  # The Forum holds the Disqus forum data, allowing the user to update
-  # the data and to iterate over the forums's threads.
+  # The Forum holds the Disqus forum data, allowing the user to
+  # iterate over the forums's threads.
   #
   # In Disqus, a forums is synonymous with a website or domain.
   class Forum

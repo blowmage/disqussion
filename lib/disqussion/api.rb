@@ -10,6 +10,11 @@ require 'json'
 # This class has the responsibility for connecting to the Disqus web services 
 # over HTTP and returning the JSON result of each service call as a Hash.
 
+# This class is intended to be useful outside of the other Disqussion classes.
+# Meaning, you can use this class without creating a Forum, Thread, or Post object.
+
+# FWIW, I don't like the long list of method parameters any more than you.
+
 module Disqussion
   class API
     
@@ -17,30 +22,33 @@ module Disqussion
     # Does not check against spam filters or ban list.
     # This is intended to allow automated importing of comments.
     #
-    # ==== Arguments
-    #
-    # * forum_key:     the blah blah blah
-    # * thread_id:     the thread to post to
-    # * message:       the content of the post
-    # * author_name:   the post creator's name
-    # * author_email:  their email address
-    # * parent_post:   the id of the parent post _Optional_
-    # * created_at:    the date this post was created _Optional_
-    # * author_url:    the author's homepage _Optional_
-    # * ip_address:    their IP address _Optional_
-    #
-    # ==== Return
-    #
-    # A hash representing the post object just created.
-    #
-    # ==== Example
-    #
     #  api = Disqussion::API.new
     #  new_post = api.create_post('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr', 
     #    'f9FsdGVkX19KNR9sFf3sAgoWC2tYstpoPlwsB3cb1RjbPJSstQm95kLoNC9dExyP', 
     #    'This is a new message', 'Mike Moore', 'mike@blowmage.com', 'http://blowmage.com/', 
     #    nil, '127.0.0.1', Time.now)
     #
+    # @param [String] forum_api_key
+    #   the forum key
+    # @param [String] thread_id
+    #   the ID of a thread belonging to the given forum
+    # @param [String] message
+    #   the contents of the post, such as "First post"
+    # @param [String] author_name
+    #   the author's full name
+    # @param [String] author_email
+    #   the author's email address
+    # @param [String] parent_post
+    #   the id of the parent post
+    # @param [String] created_at
+    #   the UTC date this post was created
+    # @param [String] author_url
+    #   the author's homepage
+    # @param [String] ip_address
+    #   the author's IP address
+    #
+    # @return [Hash]
+    #   A hash representing the post object just created
     def create_post(forum_key, thread_id, message, author_name, author_email, 
         author_url = nil, parent_post = nil, ip_address = nil, created_at = nil)
       params = {
@@ -57,16 +65,16 @@ module Disqussion
       post 'create_post', params
     end
     
-    # get_forum_list:
-    # 
-    # ==== Arguments
+    # Retrieves a list of forums the user owns.
     #
-    # * user_api_key: The blah blah blah
-    # 
-    # ==== Return
+    #  api = Disqussion::API.new
+    #  forums = api.get_forum_list('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr')
     #
-    # A list of objects representing all forums the user owns.
+    # @param [String] forum_api_key
+    #   the forum key
     #
+    # @return [Array<Hash>]
+    #   An array of hashes representing the forums
     def get_forum_list(user_api_key)
       get 'get_forum_list', { 'user_api_key' => user_api_key }
     end
@@ -74,81 +82,94 @@ module Disqussion
     # Retrieves the API Key for a given Forum.
     # The API Key is needed for other Disqus API calls.
     # 
-    # ==== Arguments
+    #  api = Disqussion::API.new
+    #  new_post = api.get_forum_api_key('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr', 
+    #    '123456')
     #
-    # * user_api_key: The blah blah blah
-    # * forum_id:     The unique id of the forum.
-    # 
-    # ==== Return
+    # @param [String] forum_api_key
+    #   the forum key
+    # @param [String] forum_id
+    #   the ID of a given forum
     #
-    # A string which is the Forum API Key for the given forum.
-    #
+    # @return [String]
+    #   A string which is the Forum API Key for the given forum.
     def get_forum_api_key(user_api_key, forum_id)
       get 'get_forum_api_key', { 'user_api_key' => user_api_key, 'forum_id' => forum_id }
     end
     
-    # get_thread_list:
-    # 
-    # ==== Arguments
+    # Retrieves a list of threads the forums owns.
     #
-    # * "forum_api_key", the blah blah blah
-    # 
-    # ==== Return
+    #  api = Disqussion::API.new
+    #  forums = api.get_forum_list('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr')
     #
-    # A list of all threads belonging to the given forum.
+    # @param [String] forum_api_key
+    #   the forum key
+    #
+    # @return [Array<Hash>]
+    #   An array of hashes representing the threads
     def get_thread_list(forum_api_key)
       get 'get_thread_list', { 'forum_api_key' => forum_api_key }
     end
     
-    # get_num_posts:
-    # 
-    # ==== Arguments
+    # Retrieves a hash of arrays with the number of visible and total comments
+    # for a list of thread ids.
     #
-    # * "forum_api_key", the blah blah blah
-    # * "thread_ids", an array of the thread IDs belonging to the given forum.
-    # 
-    # ==== Return
+    #  api = Disqussion::API.new
+    #  num_posts = api.get_num_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #    ['123456', '123457', '123458'])
     #
-    # An object mapping each thread_id to a list of two numbers.
-    # The first number is the number of visible comments on on the thread;
-    # this would be useful for showing users of the site (e.g., "5 Comments").
-    # The second number is the total number of comments on the thread.
-    # These numbers are different because some forums require moderator approval,
-    # some messages are flagged as spam, etc.
+    # @param [String] forum_api_key
+    #   the forum key
+    # @param [Array<String>] thread_ids
+    #   an array of the thread IDs belonging to the given forum
+    #
+    # @return [Hash<Array>]
+    #   A hash mapping each thread_id to a list of two numbers.
+    #   The first number is the number of visible comments on on the thread;
+    #   this would be useful for showing users of the site (e.g., "5 Comments").
+    #   The second number is the total number of comments on the thread.
+    #   These numbers are different because some forums require moderator approval,
+    #   some messages are flagged as spam, etc.
     def get_num_posts(forum_api_key, thread_ids)
       get 'get_num_posts', { 'forum_api_key' => forum_api_key , 'thread_ids' => thread_ids.join(',')}
     end
     
-    # get_thread_by_url:
-    # 
-    # ==== Arguments
+    # Retrieves a hash representing a thread for the given URL.
     #
-    # * "forum_api_key", the blah blah blah
-    # * "url", the URL to check for an associated thread.
-    # 
-    # ==== Return
+    #  api = Disqussion::API.new
+    #  thread = api.get_thread_by_url('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #    'http://blowmage.com/announcing-disqussion')
     #
-    # A thread object if one was found, otherwise null.
-    # Only finds threads associated with the given forum.
-    # Note that there is no one-to-one mapping between threads and URLs:
-    # a thread will only have an associated URL if it was automatically created
-    # by Disqus javascript embedded on that page.
-    # Therefore, we recommend using thread_by_identifier whenever possible,
-    # and this method is provided mainly for handling comments from before your forum was using the API.
+    # @param [String] forum_api_key
+    #   the forum key
+    # @param [String] url
+    #   the URL of the thread
+    #
+    # @return [Hash]
+    #   A thread object if one was found, otherwise null.
+    #   Only finds threads associated with the given forum.
+    #   Note that there is no one-to-one mapping between threads and URLs:
+    #   a thread will only have an associated URL if it was automatically created
+    #   by Disqus javascript embedded on that page.
+    #   Therefore, we recommend using thread_by_identifier whenever possible,
+    #   and this method is provided mainly for handling comments from before your forum was using the API.
     def get_thread_by_url(forum_api_key, url)
       get 'get_thread_by_url', { 'forum_api_key' => forum_api_key, 'url' => url }
     end
     
-    # get_thread_posts:
-    # 
-    # ==== Arguments
+    # Retrieves a list of posts assosciated with a thread.
     #
-    # * "forum_api_key", the blah blah blah
-    # * "thread_id", the ID of a thread belonging to the given forum.
-    # 
-    # ==== Return
+    #  api = Disqussion::API.new
+    #  posts = api.get_thread_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #    '1234')
     #
-    # A list of objects representing all posts belonging to the given forum.
+    # @param [String] forum_api_key
+    #   the forum key
+    # @param [String] thread_id
+    #   the ID of a thread
+    #
+    # @return [Array<Hash>]
+    #   An array of hashes representing the posts
     def get_thread_posts(forum_api_key, thread_id)
       get 'get_thread_posts', { 'forum_api_key' => forum_api_key, 'thread_id' => thread_id }
     end
@@ -159,37 +180,50 @@ module Disqussion
     # (Disqus would normally use a thread's URL to identify it,
     # which is problematic when URLs do not uniquely identify a resource.)
     # If no thread yet exists for the given identifier (paired with the forum), one will be created.
-    # 
-    # ==== Arguments
     #
-    # * "forum_api_key", the blah blah blah
-    # * "title", the title of the thread to possibly be created; and "identifier", a string of your choosing (see Action).
-    # 
-    # ==== Return
+    #  api = Disqussion::API.new
+    #  new_thread = api.thread_by_identifier('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #    'new-disqus-thread', 'This is a new thread!')
+    #  existing_thread = api.thread_by_identifier('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #    'existing-disqus-thread', 'This title won't get set...')
     #
-    # An object with two keys: "thread", which is the thread object corresponding to the identifier;
-    # and "created", which indicates whether the thread was created as a result of this method call.
-    # If created, it will have the specified title.
+    # @param [String] forum_api_key
+    #   the forum key
+    # @param [String] identifier
+    #   a string of your choosing
+    # @param [String] title
+    #   the title of the thread to possibly be created
+    #
+    # @return [Hash]
+    #   A Hash with two keys: "thread", which is the thread object corresponding to the identifier;
+    #   and "created", which indicates whether the thread was created as a result of this method call.
+    #   If created, it will have the specified title.
     def thread_by_identifier(forum_api_key, identifier, title)
       post 'thread_by_identifier', { 'forum_api_key' => forum_api_key, 'identifier' => identifier, 'title' => title }
     end
     
     # Updates a thread's attributes.
     # 
-    # ==== Required Arguments
+    # Retrieves a hash of arrays with the number of visible and total comments
+    # for a list of thread ids.
     #
-    # * "forum_api_key", the forum key
-    # * "thread_id", the ID of a thread belonging to the given forum
-    # 
-    # ==== Optional Arguments
+    #  api = Disqussion::API.new
+    #  num_posts = api.get_num_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #    ['123456', '123457', '123458'])
     #
-    # * "title", the title of the thread
-    # * "slug", the per-forum-unique string used for identifying this thread in disqus.com URLs relating to this thread. Composed of underscore-separated alphanumeric strings
-    # * "allow_comments", whether this thread is open to new comments
-    # 
-    # ==== Return
+    # @param [String] forum_api_key
+    #   the forum key
+    # @param [String] thread_id
+    #   the ID of a thread belonging to the given forum
+    # @param [String] title
+    #   the title of the thread
+    # @param [String] slug
+    #   the per-forum-unique string used for identifying this thread in disqus.com URLs relating to this thread. Composed of underscore-separated alphanumeric strings.
+    # @param [Boolean] allow_comments
+    #   whether this thread is open to new comments
     #
-    # An empty success message.
+    # @return [Hash]
+    #   An empty success message.
     def update_thread(forum_api_key, thread_id, title = nil, slug = nil, allow_comments = nil)
       params = { 'forum_api_key' => forum_api_key, 'thread_id' => thread_id }
       params['title'] = title if title
