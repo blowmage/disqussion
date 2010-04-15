@@ -62,15 +62,5 @@ module Disqussion
 
     alias :anonymous? :is_anonymous
     alias :shown? :shown
-
-    # Gets the parent post for this post.
-    def parent
-      thread[parent_post]
-    end
-
-    # Gets the child posts to this post.
-    def children
-      thread.posts.find_all {|t| t.parent_post == id }
-    end
   end
 end

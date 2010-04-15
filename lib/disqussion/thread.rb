@@ -89,6 +89,16 @@ module Disqussion
       forum.session.api.update_thread(forum.forum_key, id, title, slug, allow_comments)
     end
 
+    # Gets the parent post of a post.
+    def parent_of(post)
+      [post.parent_post]
+    end
+
+    # Gets the child posts of a post.
+    def children_of(post)
+      posts.find_all {|t| t.parent_post == post.id }
+    end
+
     private
 
     # Retrieves the Post array from the API.
