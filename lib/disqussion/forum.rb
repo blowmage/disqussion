@@ -62,8 +62,6 @@ module Disqussion
     #
     #  disqus       = Disqussion.new
     #  blowmage     = disqus['blowmage']
-    #  random_page  = blowmage['345678']
-    #  another_page = blowmage['announcing-disqussion']
     def [](identifier)
       thread = threads.find_by_id(identifier)
       thread = threads.find_by_slug(identifier) if thread.nil?
