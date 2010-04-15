@@ -1,7 +1,13 @@
+# -*- encoding: utf-8 -*-
+lib = File.expand_path('../lib/', __FILE__)
+$:.unshift lib unless $:.include?(lib)
+
+require 'disqussion'
+
 Gem::Specification.new do |s|
     s.platform          = Gem::Platform::RUBY
     s.name              = 'disqussion'
-    s.version           = '0.2.0'
+    s.version           = Disqussion::VERSION
     s.author            = 'Mike Moore'
     s.email             = 'mike@blowmage.com'
     s.summary           = 'Disqus API made easy.'
