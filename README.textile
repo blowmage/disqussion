@@ -1,6 +1,6 @@
 h1. Disqussion - A library for using the Disqus web API.
 
-* "http://github.com/blowmage/disqussion/wikis":http://github.com/blowmage/disqussion/wikis
+* "http://wiki.github.com/blowmage/disqussion/":http://wiki.github.com/blowmage/disqussion/
 * "mike@blowmage.com":mailto:mike@blowmage.com
 
 Copyright:: (C) 2009 "Mike Moore":mailto:mike@blowmage.com
@@ -114,22 +114,6 @@ disqus   = Disqussion.new
 blowmage = disqus['blowmage']
 page     = blowmage['announcing-disqussion']
 comment  = page.posts['567890']</code></pre>
-
-h3. Working with Forums
-
-TODO: write this
-
-h3. Working with Threads
-
-TODO: write this
-
-h3. Working with Posts
-
-TODO: write this
-
-h3. Working with Authors
-
-TODO: write this
 
 h2. Calling the Disqus Web API Directly
 
