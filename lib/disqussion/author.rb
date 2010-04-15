@@ -1,6 +1,20 @@
 module Disqussion
+  # The Author holds the Disqus author data.
   class Author
     
+    # Creates a new Author instance from a hash of values.
+    #
+    #  post = Author.from_hash({'id' => '12345'
+    #                           'username' => 'someguy'
+    #                           'name' => 'Just some guy'
+    #                           'url' => 'http://someguy.com/'
+    #                           'email_hash' => '...'
+    #                           'has_avatar' => true})
+    #                         
+    # @param [Hash] Author
+    #   the values to create the Post with
+    # @param [Post] post
+    #   the post the author belongs to
     def self.from_hash(author_hash, post = nil)
       author              = Author.new
       author.id           = author_hash['id']
