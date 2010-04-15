@@ -18,7 +18,8 @@ module Disqussion
     end
 
     # Clears the list of forums.
-    def clear
+    def clear!
+      @forums.clear! if @forums
       @forums = nil
     end
 

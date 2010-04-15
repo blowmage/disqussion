@@ -38,6 +38,12 @@ module Disqussion
       @threads ||= retrieve_threads
     end
 
+    # Clears the list of threads.
+    def clear!
+      @threads.clear! if @threads
+      @threads = nil
+    end
+
     def create_thread(identifier, title) # The identifier should be the URL if possible
       response = API.thread_by_identifier(forum_api_key, identifier, title)
       raise Error(response['message']) if response['succeeded'].nil?

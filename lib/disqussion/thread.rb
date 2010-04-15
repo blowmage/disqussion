@@ -48,6 +48,11 @@ module Disqussion
       @posts ||= retrieve_posts
     end
 
+    # Clears the list of posts.
+    def clear!
+      @posts = nil
+    end
+
     # Returns all the thread's parent posts. Useful for navigating the
     # posts in a threaded manner.
     # @return [Array<Post>] a list of the parent posts
