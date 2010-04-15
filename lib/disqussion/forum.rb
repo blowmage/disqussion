@@ -23,6 +23,10 @@ module Disqussion
       forum
     end
 
+    # id: a unique alphanumeric string identifying this Forum object.
+    # shortname: the unique string used in disqus.com URLs relating to this forum. For example, if the shortname is "bmb", the forum's community page is at http://bmb.disqus.com/.
+    # name: a string for displaying the forum's full title, like "The Eyeball Kid's Blog".
+
     attr_accessor :session, :id, :shortname, :name
     alias :short_name :shortname
     alias :short_name= :shortname=

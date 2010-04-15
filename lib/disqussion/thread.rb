@@ -29,6 +29,15 @@ module Disqussion
       thread
     end
 
+    # id: a unique alphanumeric string identifying this Thread object.
+    # forum: the id for the forum this thread belongs to.
+    # slug: the per-forum-unique string used for identifying this thread in disqus.com URLs relating to this thread. Composed of underscore-separated alphanumeric strings.
+    # title: the title of the thread.
+    # created_at: the UTC date this thread was created, in the format %Y-%m-%dT%H:%M.
+    # allow_comments: whether this thread is open to new comments.
+    # url: the URL this thread is on, if known.
+    # identifier: the user-provided identifier for this thread, as in thread_by_identifier above (if available)
+
     attr_accessor :forum, :id, :title, :slug, :allow_comments, :hidden, :created_at
     alias :hidden? :hidden
     def visible
