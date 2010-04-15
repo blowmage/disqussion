@@ -25,7 +25,7 @@ module Disqussion
       @is_anonymous = opts.has_key?('display_name')
     end
     
-    attr_accessor :post, :id, :username, :name, :url, :email_hash, :has_avatar, :is_anonymous
+    attr_accessor :id, :username, :name, :url, :email_hash, :has_avatar, :is_anonymous
     alias :avatar? :has_avatar
     alias :anonymous? :is_anonymous
     
