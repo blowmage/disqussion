@@ -20,6 +20,8 @@ module Disqussion
     # @param [Hash] opts
     #   the values to create the Post with
     def initialize(opts = {})
+      @forum        = opts['forum']
+      @thread       = opts['thread']
       @id           = opts['id']
       @message      = opts['message']
       @parent_post  = opts['parent_post']
@@ -49,7 +51,7 @@ module Disqussion
     #  email_hash: md5 of the author's email address
     #  has_avatar: whether the user has an avatar on disqus.com
 
-    attr_accessor :id, :message, :parent_post, :shown, :is_anonymous, :author, :created_at
+    attr_accessor :forum, :thread, :id, :message, :parent_post, :shown, :is_anonymous, :author, :created_at
 
     alias :anonymous? :is_anonymous
     alias :shown? :shown

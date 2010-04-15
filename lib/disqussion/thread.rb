@@ -18,6 +18,7 @@ module Disqussion
     def initialize(opts = {})
       @user_key       = opts['user_key']
       @forum_key      = opts['forum_key']
+      @forum          = opts['forum']
       @id             = opts['id']
       @title          = opts['title']
       @slug           = opts['slug']
@@ -35,7 +36,7 @@ module Disqussion
     # url: the URL this thread is on, if known.
     # identifier: the user-provided identifier for this thread, as in thread_by_identifier above (if available)
 
-    attr_accessor :user_key, :forum_key, :id, :title, :slug, :allow_comments, :hidden, :created_at
+    attr_accessor :user_key, :forum_key, :forum, :id, :title, :slug, :allow_comments, :hidden, :created_at
     alias :hidden? :hidden
     def visible
       !hidden
