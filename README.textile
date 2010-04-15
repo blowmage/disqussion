@@ -3,7 +3,7 @@ h1. Disqussion - A library for using the Disqus web API.
 * "http://wiki.github.com/blowmage/disqussion/":http://wiki.github.com/blowmage/disqussion/
 * "mike@blowmage.com":mailto:mike@blowmage.com
 
-Copyright:: (C) 2009 "Mike Moore":mailto:mike@blowmage.com
+Copyright:: (C) 2010 "Mike Moore":mailto:mike@blowmage.com
 License:: Distributes under the same terms as Ruby
 
 h2. Description
@@ -24,7 +24,7 @@ or
 <pre><code>git clone git://github.com/blowmage/disqussion.git
 cd disqussion
 gem build disqussion.gemspec
-[sudo] gem install disqussion-0.1.0.gem</code></pre>
+[sudo] gem install disqussion-0.2.0.gem</code></pre>
 
 h2. Feeling your way around Disqussion
 
