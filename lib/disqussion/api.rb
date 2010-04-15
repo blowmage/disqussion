@@ -174,18 +174,18 @@ module Disqussion
       post 'thread_by_identifier', { 'forum_api_key' => forum_api_key, 'identifier' => identifier, 'title' => title }
     end
     
-    # Sets the provided values on the thread object.
+    # Updates a thread's attributes.
     # 
     # ==== Required Arguments
     #
-    # * "forum_api_key", the blah blah blah
-    # * "thread_id", the ID of a thread belonging to the given forum.
+    # * "forum_api_key", the forum key
+    # * "thread_id", the ID of a thread belonging to the given forum
     # 
     # ==== Optional Arguments
     #
-    # * "title", the blah blah blah
-    # * "slug", the blah blah blah
-    # * "allow_comments", the blah blah blah
+    # * "title", the title of the thread
+    # * "slug", the per-forum-unique string used for identifying this thread in disqus.com URLs relating to this thread. Composed of underscore-separated alphanumeric strings
+    # * "allow_comments", whether this thread is open to new comments
     # 
     # ==== Return
     #
@@ -195,20 +195,28 @@ module Disqussion
       params['title'] = title if title
       params['slug'] = slug if slug
       params['allow_comments'] = allow_comments if allow_comments
+      # Where do we check the response code?
       post 'update_thread', params
     end
     
     private
     
     def get(method, params = {})
-      uri = URI.parse("http://disqus.com/api/#{method}/")
-      uri.query = params.map { |k,v| "#{URI.escape(k)}=#{URI.escape(v)}" }.join('&')
+      uri = URI.parse("http://disqus.com/api/#{method}/?#{hash_to_query(params)}")
+      # should we raise an error is response.code != 200?
+      # or if JSON(response.body)['code'] != 'ok'
       JSON.parse(Net::HTTP.get(uri))
     end
     
-    def post(method, params)
+    def post(method, params = {})
       uri = URI.parse("http://disqus.com/api/#{method}/")
+      # should we raise an error is response.code != 200?
+      # or if JSON(response.body)['code'] != 'ok'
       JSON.parse(Net::HTTP.post_form(uri, params).body)
+    end
+
+    def hash_to_query(hsh)
+      hsh.map { |k,v| "#{URI.escape(k)}=#{URI.escape(v)}" }.join('&')
     end
   end
 end

@@ -85,6 +85,10 @@ module Disqussion
       "#{id} - #{slug}"
     end
 
+    def update
+      forum.session.api.update_thread(forum.forum_key, id, title, slug, allow_comments)
+    end
+
     private
 
     # def retrieve_posts()
