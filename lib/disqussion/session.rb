@@ -3,37 +3,12 @@ module Disqussion
   # as serve as the top-most object holding all of the user's Forums.
   class Session
 
-    # Set the default Disqus user_key to use for all future sessions.
-    def self.default_user_key=(value)
-      @@default_user_key = value
-    end
-
-    # Retrieve the default Disqus user_key.
-    def self.default_user_key
-      @@default_user_key ||= retrieve_default_user_key
-    end
-
-    # Retrieve the default Disqus user_key, raising InvalidKeyError if
-    # there is no key found.
-    def self.default_user_key!
-      key = self.default_user_key
-      throw InvalidKeyError if key.nil?
-      key
-    end
-
-    attr_writer :user_key
-
-    # Retrieve the Disqus user_key, finding the default if neccessary.
-    def user_key
-      @user_key ||= Session.default_user_key!
-    end
-    alias :user_api_key :user_key
-    alias :user_api_key= :user_key=
+    attr_accessor :user_key
 
     # A new instance of Session.
     # @param [String, #user_key] Disqus user_key
     def initialize(user_key = nil)
-      user_key = @user_key if user_key
+      @user_key = user_key if user_key
     end
 
     # Returns all the user's forums.
@@ -77,17 +52,6 @@ module Disqussion
       nil
     end
 
-    # Retrieves the default Disqus user_key from the user's HOME
-    # directory.
-    def self.retrieve_default_user_key
-      %w{.disqus .disqus_key .disqus_user_api_key}.each do |file|
-        file = "#{ENV['HOME']}/#{file}"
-        if File.exists? file
-          return File.open(file, 'r').read
-        end
-      end
-      nil
-    end
   end
 
 end
