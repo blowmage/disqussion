@@ -15,7 +15,7 @@ module Disqussion
     #
     # @param [Hash] thread_hash
     #   the values to create the Forum with
-    # @param [Session] forum
+    # @param [Forum] forum
     #   the forum the thread belongs to
     def self.from_hash(thread_hash, forum = nil)
       thread                = Thread.new
