@@ -44,16 +44,6 @@ module Disqussion
       @threads = nil
     end
 
-    def create_thread(identifier, title) # The identifier should be the URL if possible
-      new_thread_hash = API.thread_by_identifier(forum_api_key, identifier, title)
-      new_thread = Thread.new(new_thread_hash.merge(default_hash))
-      @threads << new_thread if @threads
-      new_thread
-    end
-    alias :add_thread :create_thread
-    alias :new_thread :create_thread
-    alias :<< :create_thread
-
     # Finds a Thread by a given URL. Useful of you want to get just
     # one Thread without retrieving all the threads for a forum.
     # Not reccomended, use find_thread_by_identifier instead.
@@ -77,8 +67,15 @@ module Disqussion
     #
     # @return [Thread]
     def find_thread_by_identifier(identifier, title)
-        Thread.new(API.thread_by_identifier(forum_api_key, identifier, title).merge(default_hash))
-      end
+      new_thread_hash = API.thread_by_identifier(forum_api_key, identifier, title)
+      new_thread = Thread.new(new_thread_hash['thread'].merge(default_hash))
+      @threads << new_thread if new_thread_hash['created'] && @threads
+      new_thread
+    end
+    alias :create_thread :find_thread_by_identifier
+    alias :add_thread :find_thread_by_identifier
+    alias :new_thread :find_thread_by_identifier
+    alias :<< :find_thread_by_identifier
 
     # Find a thread by either it's identifier or slug.
     #
