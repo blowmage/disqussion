@@ -9,13 +9,13 @@ module Disqussion
     end
 
     # Retrieve the default Disqus user_key.
-    def self.default_user_key()
+    def self.default_user_key
       @@default_user_key ||= retrieve_default_user_key
     end
 
     # Retrieve the default Disqus user_key, raising InvalidKeyError if
     # there is no key found.
-    def self.default_user_key!()
+    def self.default_user_key!
       key = self.default_user_key
       throw InvalidKeyError if key.nil?
       key
@@ -24,11 +24,11 @@ module Disqussion
     attr_writer :user_key, :api
 
     # Retrieve the Disqus user_key, finding the default if neccessary.
-    def user_key()
+    def user_key
       @user_key ||= Session.default_user_key!
     end
     # Retrieving or creating the API object for the Session.
-    def api()
+    def api
       @api ||= API.new
     end
     alias :user_api_key :user_key
@@ -44,12 +44,12 @@ module Disqussion
 
     # Returns all the user's forums.
     # @return [Array<Forum>] a list of forums
-    def forums()
+    def forums
       @forums ||= retrieve_forums
     end
 
     # Clears the list of forums.
-    def clear()
+    def clear
       @forums = nil
     end
 
@@ -67,7 +67,7 @@ module Disqussion
     private
 
     # Retrieves the Forum array from the API.
-    def retrieve_forums()
+    def retrieve_forums
       msg = api.get_forum_list(user_key)
       if msg && msg['succeeded']
         forums = []
@@ -88,7 +88,7 @@ module Disqussion
 
     # Retrieves the default Disqus user_key from the user's HOME
     # directory.
-    def self.retrieve_default_user_key()
+    def self.retrieve_default_user_key
       %w{.disqus .disqus_key .disqus_user_api_key}.each do |file|
         file = "#{ENV['HOME']}/#{file}"
         if File.exists? file

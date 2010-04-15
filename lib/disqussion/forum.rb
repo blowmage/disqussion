@@ -32,13 +32,13 @@ module Disqussion
     alias :short_name= :shortname=
 
     # Retrieve the Disqus forum_api_key, finding the value  if neccessary.
-    def forum_key()
+    def forum_key
       @forum_key ||= retrieve_forum_key
     end
 
     # Returns all the forum's threads.
     # @return [Array<Thread>] a list of forums
-    def threads()
+    def threads
       @threads ||= retrieve_threads
     end
 
@@ -81,7 +81,7 @@ module Disqussion
     private
 
     # Retrieves the forum's api_key from the API object.
-    def retrieve_forum_key()
+    def retrieve_forum_key
       msg = session.api.get_forum_api_key(session.user_key, id)
       if msg && msg['succeeded']
         return msg['message']
@@ -90,7 +90,7 @@ module Disqussion
     end
 
     # Retrieves the Thread array from the API.
-    def retrieve_threads()
+    def retrieve_threads
       msg = session.api.get_thread_list(forum_key)
       if msg && msg['succeeded']
         threads = []

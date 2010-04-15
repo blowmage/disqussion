@@ -47,14 +47,14 @@ module Disqussion
 
     # Returns all the thread's posts.
     # @return [Array<Post>] a list of posts
-    def posts()
+    def posts
       @posts ||= retrieve_posts
     end
 
     # Returns all the thread's parent posts. Useful for navigating the
     # posts in a threaded manner.
     # @return [Array<Post>] a list of the parent posts
-    def parent_posts()
+    def parent_posts
       posts.find_all {|p| p.parent_post.nil? }
     end
 
@@ -91,7 +91,7 @@ module Disqussion
 
     private
 
-    # def retrieve_posts()
+    # def retrieve_posts
     #   msg = forum.session.api.get_thread_posts(forum.forum_key, id)
     #   if msg && msg['succeeded']
     #     posts = []
@@ -112,10 +112,10 @@ module Disqussion
     # end
 
     # Retrieves the Post array from the API.
-    def retrieve_posts()
+    def retrieve_posts
       msg = forum.session.api.get_thread_posts(forum.forum_key, id)
       if msg && msg['succeeded']
-        posts = new_post_array()
+        posts = new_post_array
         msg['message'].each do |post_hash|
           posts << Post.from_hash(post_hash, self)
         end
@@ -125,7 +125,7 @@ module Disqussion
     end
 
     # Creates a new array with the proper methods monkey-patched in.
-    def new_post_array()
+    def new_post_array
       posts = []
       # Add reference to thread
       def posts.thread
