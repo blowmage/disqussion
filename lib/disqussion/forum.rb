@@ -51,12 +51,33 @@ module Disqussion
 
     # Finds a Thread by a given URL. Useful of you want to get just
     # one Thread without retrieving all the threads for a forum.
+    # Not reccomended, use find_thread_by_identifier instead.
     def find_thread_by_url(url)
-      return @threads.find_by_slug(url) if @threads
       response = API.get_thread_by_url(forum_api_key, url)
       raise Error(response['message']) if response['succeeded'].nil?
       Thread.from_hash(response['thread'], self)
     end
+
+    # Create or retrieve a thread by an arbitrary identifying string of your choice.
+    #
+    #  disqus   = Disqussion.new
+    #  blowmage = disqus['blowmage']
+    #  new_thread = blowmage.find_thread_by_identifier(
+    #    'new-disqus-thread', 'This is a new thread!')
+    #  existing_thread = blowmage.find_thread_by_identifier(
+    #    'existing-disqus-thread', 'This title won't get set...')
+    #
+    # @param [String] identifier
+    #   a string of your choosing
+    # @param [String] title
+    #   the title of the thread to possibly be created
+    #
+    # @return [Thread]
+    def find_thread_by_identifier(identifier, title)
+        response = API.thread_by_identifier(forum_api_key, identifier, title)
+        raise Error(response['message']) if response['succeeded'].nil?
+        Thread.from_hash(response['thread'], self)
+      end
 
     # Find a thread by either it's identifier or slug.
     #
