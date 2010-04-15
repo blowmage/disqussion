@@ -12,7 +12,7 @@ module Disqussion
   VERSION = [ MAJOR, MINOR, TINY ].join( "." )
   
   # Shortcut for Disqussion::Session.new(user_key, api)
-  def self.new(user_key = nil, api = nil)
-    Session.new(user_key, api)
+  def self.new(user_key = nil)
+    Session.new(user_key)
   end
 end

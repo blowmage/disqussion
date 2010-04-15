@@ -22,8 +22,7 @@ module Disqussion
     # Does not check against spam filters or ban list.
     # This is intended to allow automated importing of comments.
     #
-    #  api = Disqussion::API.new
-    #  new_post = api.create_post('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr', 
+    #  new_post = Disqussion::API.create_post('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr', 
     #    'f9FsdGVkX19KNR9sFf3sAgoWC2tYstpoPlwsB3cb1RjbPJSstQm95kLoNC9dExyP', 
     #    'This is a new message', 'Mike Moore', 'mike@blowmage.com', 'http://blowmage.com/', 
     #    nil, '127.0.0.1', Time.now)
@@ -49,7 +48,7 @@ module Disqussion
     #
     # @return [Hash]
     #   A hash representing the post object just created
-    def create_post(forum_key, thread_id, message, author_name, author_email, 
+    def self.create_post(forum_key, thread_id, message, author_name, author_email, 
         author_url = nil, parent_post = nil, ip_address = nil, created_at = nil)
       params = {
         'forum_key' => forum_key,
@@ -67,23 +66,21 @@ module Disqussion
     
     # Retrieves a list of forums the user owns.
     #
-    #  api = Disqussion::API.new
-    #  forums = api.get_forum_list('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr')
+    #  forums = Disqussion::API.get_forum_list('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr')
     #
     # @param [String] forum_api_key
     #   the forum key
     #
     # @return [Array<Hash>]
     #   An array of hashes representing the forums
-    def get_forum_list(user_api_key)
+    def self.get_forum_list(user_api_key)
       get 'get_forum_list', { 'user_api_key' => user_api_key }
     end
     
     # Retrieves the API Key for a given Forum.
     # The API Key is needed for other Disqus API calls.
     # 
-    #  api = Disqussion::API.new
-    #  new_post = api.get_forum_api_key('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr', 
+    #  new_post = Disqussion::API.get_forum_api_key('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr', 
     #    '123456')
     #
     # @param [String] forum_api_key
@@ -93,29 +90,27 @@ module Disqussion
     #
     # @return [String]
     #   A string which is the Forum API Key for the given forum.
-    def get_forum_api_key(user_api_key, forum_id)
+    def self.get_forum_api_key(user_api_key, forum_id)
       get 'get_forum_api_key', { 'user_api_key' => user_api_key, 'forum_id' => forum_id }
     end
     
     # Retrieves a list of threads the forums owns.
     #
-    #  api = Disqussion::API.new
-    #  forums = api.get_forum_list('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr')
+    #  forums = Disqussion::API.get_forum_list('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr')
     #
     # @param [String] forum_api_key
     #   the forum key
     #
     # @return [Array<Hash>]
     #   An array of hashes representing the threads
-    def get_thread_list(forum_api_key)
+    def self.get_thread_list(forum_api_key)
       get 'get_thread_list', { 'forum_api_key' => forum_api_key }
     end
     
     # Retrieves a hash of arrays with the number of visible and total comments
     # for a list of thread ids.
     #
-    #  api = Disqussion::API.new
-    #  num_posts = api.get_num_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #  num_posts = Disqussion::API.get_num_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
     #    ['123456', '123457', '123458'])
     #
     # @param [String] forum_api_key
@@ -130,14 +125,13 @@ module Disqussion
     #   The second number is the total number of comments on the thread.
     #   These numbers are different because some forums require moderator approval,
     #   some messages are flagged as spam, etc.
-    def get_num_posts(forum_api_key, thread_ids)
+    def self.get_num_posts(forum_api_key, thread_ids)
       get 'get_num_posts', { 'forum_api_key' => forum_api_key , 'thread_ids' => thread_ids.join(',')}
     end
     
     # Retrieves a hash representing a thread for the given URL.
     #
-    #  api = Disqussion::API.new
-    #  thread = api.get_thread_by_url('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #  thread = Disqussion::API.get_thread_by_url('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
     #    'http://blowmage.com/announcing-disqussion')
     #
     # @param [String] forum_api_key
@@ -153,14 +147,13 @@ module Disqussion
     #   by Disqus javascript embedded on that page.
     #   Therefore, we recommend using thread_by_identifier whenever possible,
     #   and this method is provided mainly for handling comments from before your forum was using the API.
-    def get_thread_by_url(forum_api_key, url)
+    def self.get_thread_by_url(forum_api_key, url)
       get 'get_thread_by_url', { 'forum_api_key' => forum_api_key, 'url' => url }
     end
     
     # Retrieves a list of posts assosciated with a thread.
     #
-    #  api = Disqussion::API.new
-    #  posts = api.get_thread_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #  posts = Disqussion::API.get_thread_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
     #    '1234')
     #
     # @param [String] forum_api_key
@@ -170,7 +163,7 @@ module Disqussion
     #
     # @return [Array<Hash>]
     #   An array of hashes representing the posts
-    def get_thread_posts(forum_api_key, thread_id)
+    def self.get_thread_posts(forum_api_key, thread_id)
       get 'get_thread_posts', { 'forum_api_key' => forum_api_key, 'thread_id' => thread_id }
     end
     
@@ -181,10 +174,9 @@ module Disqussion
     # which is problematic when URLs do not uniquely identify a resource.)
     # If no thread yet exists for the given identifier (paired with the forum), one will be created.
     #
-    #  api = Disqussion::API.new
-    #  new_thread = api.thread_by_identifier('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #  new_thread = Disqussion::API.thread_by_identifier('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
     #    'new-disqus-thread', 'This is a new thread!')
-    #  existing_thread = api.thread_by_identifier('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #  existing_thread = Disqussion::API.thread_by_identifier('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
     #    'existing-disqus-thread', 'This title won't get set...')
     #
     # @param [String] forum_api_key
@@ -198,7 +190,7 @@ module Disqussion
     #   A Hash with two keys: "thread", which is the thread object corresponding to the identifier;
     #   and "created", which indicates whether the thread was created as a result of this method call.
     #   If created, it will have the specified title.
-    def thread_by_identifier(forum_api_key, identifier, title)
+    def self.thread_by_identifier(forum_api_key, identifier, title)
       post 'thread_by_identifier', { 'forum_api_key' => forum_api_key, 'identifier' => identifier, 'title' => title }
     end
     
@@ -207,8 +199,7 @@ module Disqussion
     # Retrieves a hash of arrays with the number of visible and total comments
     # for a list of thread ids.
     #
-    #  api = Disqussion::API.new
-    #  num_posts = api.get_num_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
+    #  num_posts = Disqussion::API.get_num_posts('4kFsdGVkX178GElQi7xINR6NRVw5gjJxIJUB9lkVRLWUzWdqgAt3tqXRXu6nfsrr',
     #    ['123456', '123457', '123458'])
     #
     # @param [String] forum_api_key
@@ -224,7 +215,7 @@ module Disqussion
     #
     # @return [Hash]
     #   An empty success message.
-    def update_thread(forum_api_key, thread_id, title = nil, slug = nil, allow_comments = nil)
+    def self.update_thread(forum_api_key, thread_id, title = nil, slug = nil, allow_comments = nil)
       params = { 'forum_api_key' => forum_api_key, 'thread_id' => thread_id }
       params['title'] = title if title
       params['slug'] = slug if slug
@@ -235,21 +226,21 @@ module Disqussion
     
     private
     
-    def get(method, params = {})
+    def self.get(method, params = {})
       uri = URI.parse("http://disqus.com/api/#{method}/?#{hash_to_query(params)}")
       # should we raise an error is response.code != 200?
       # or if JSON(response.body)['code'] != 'ok'
       JSON.parse(Net::HTTP.get(uri))
     end
     
-    def post(method, params = {})
+    def self.post(method, params = {})
       uri = URI.parse("http://disqus.com/api/#{method}/")
       # should we raise an error is response.code != 200?
       # or if JSON(response.body)['code'] != 'ok'
       JSON.parse(Net::HTTP.post_form(uri, params).body)
     end
 
-    def hash_to_query(hsh)
+    def self.hash_to_query(hsh)
       hsh.map { |k,v| "#{URI.escape(k)}=#{URI.escape(v)}" }.join('&')
     end
   end

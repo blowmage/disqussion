@@ -5,28 +5,25 @@ module Disqussion
   # In Disqus, a thread is synonymous with a page on a website.
   class Thread
 
-    # Creates a new Thread instance from a hash of values.
+    # Creates a new Thread instance.
     #
-    #  thread = Thread.from_hash({'id' => '1234', title => 'title',
-    #                             'slug' => '/some/path/here',
-    #                             'allow_comments' => false,
-    #                             'hidden' => false,
-    #                             'created_at' => Time.now})
+    #  thread = Thread.new({ 'id' => '1234', title => 'title',
+    #                        'slug' => '/some/path/here',
+    #                        'allow_comments' => false,
+    #                        'hidden' => false,
+    #                        'created_at' => Time.now })
     #
-    # @param [Hash] thread_hash
+    # @param [Hash] opts
     #   the values to create the Forum with
-    # @param [Forum] forum
-    #   the forum the thread belongs to
-    def self.from_hash(thread_hash, forum = nil)
-      thread                = Thread.new
-      thread.id             = thread_hash['id']
-      thread.title          = thread_hash['title']
-      thread.slug           = thread_hash['slug']
-      thread.allow_comments = thread_hash['allow_comments']
-      thread.hidden         = thread_hash['hidden']
-      thread.created_at     = thread_hash['created_at']
-      thread.forum = forum
-      thread
+    def initialize(opts = {})
+      @user_key       = opts['user_key']
+      @forum_key      = opts['forum_key']
+      @id             = opts['id']
+      @title          = opts['title']
+      @slug           = opts['slug']
+      @allow_comments = opts['allow_comments']
+      @hidden         = opts['hidden']
+      @created_at     = opts['created_at']
     end
 
     # id: a unique alphanumeric string identifying this Thread object.
@@ -38,7 +35,7 @@ module Disqussion
     # url: the URL this thread is on, if known.
     # identifier: the user-provided identifier for this thread, as in thread_by_identifier above (if available)
 
-    attr_accessor :forum, :id, :title, :slug, :allow_comments, :hidden, :created_at
+    attr_accessor :user_key, :forum_key, :id, :title, :slug, :allow_comments, :hidden, :created_at
     alias :hidden? :hidden
     def visible
       !hidden
@@ -61,7 +58,7 @@ module Disqussion
     # Create a new post from a long list of method parameters. So sad.
     def create_post(message, author_name, author_email, author_url = nil, ip_address = nil, created_at = nil) # The identifier should be the URL if possible
       # law of demeter? pshaw!
-      response = forum.session.api.create_post(forum.forum_key, id, message, author_name, author_email, author_url, ip_address, created_at)
+      response = API.create_post(forum_key, id, message, author_name, author_email, author_url, ip_address, created_at)
       raise Error(response['message']) if response['succeeded'].nil?
       new_post = Post.from_hash(response['post'], self)
       @posts << new_post if @posts
@@ -79,14 +76,8 @@ module Disqussion
       posts.find {|t| t.id == identifier }
     end
 
-    # Override inspect because of the circular dependencies. Otherwise
-    # Discussion is unusable in irb.
-    def inspect
-      "#{id} - #{slug}"
-    end
-
     def update
-      forum.session.api.update_thread(forum.forum_key, id, title, slug, allow_comments)
+      API.update_thread(forum_key, id, title, slug, allow_comments)
     end
 
     # Gets the parent post of a post.
@@ -103,11 +94,11 @@ module Disqussion
 
     # Retrieves the Post array from the API.
     def retrieve_posts
-      msg = forum.session.api.get_thread_posts(forum.forum_key, id)
+      msg = API.get_thread_posts(forum_key, id)
       if msg && msg['succeeded']
         posts = []
         msg['message'].each do |post_hash|
-          posts << Post.from_hash(post_hash, self)
+          posts << Post.new(post_hash)
         end
         return posts
       end

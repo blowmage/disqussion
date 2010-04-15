@@ -5,29 +5,25 @@ module Disqussion
   # In Disqus, a forums is synonymous with a website or domain.
   class Forum
 
-    # Creates a new Forum instance from a hash of values.
+    # Creates a new Forum instance.
     #
-    #  forums = Forum.from_hash({:id => '1234', shortname => 'sn',
-    #                            :name => 'name'})
+    #  forums = Forum.new({ 'id' => '1234', 'shortname' => 'sn',
+    #                       'name' => 'name' })
     #
-    # @param [Hash] forum_hash
+    # @param [Hash] opts
     #   the values to create the Forum with
-    # @param [Session] session
-    #   the session the forum belongs to
-    def self.from_hash(forum_hash, session = nil)
-      forum           = Forum.new
-      forum.id        = forum_hash['id']
-      forum.shortname = forum_hash['shortname']
-      forum.name      = forum_hash['name']
-      forum.session   = session
-      forum
+    def initialize(opts = {})
+      @user_key  = opts['user_key']
+      @id        = opts['id']
+      @shortname = opts['shortname']
+      @name      = opts['name']
     end
 
     # id: a unique alphanumeric string identifying this Forum object.
     # shortname: the unique string used in disqus.com URLs relating to this forum. For example, if the shortname is "bmb", the forum's community page is at http://bmb.disqus.com/.
     # name: a string for displaying the forum's full title, like "The Eyeball Kid's Blog".
 
-    attr_accessor :session, :id, :shortname, :name
+    attr_accessor :user_key, :id, :shortname, :name
     alias :short_name :shortname
     alias :short_name= :shortname=
 
@@ -43,7 +39,7 @@ module Disqussion
     end
 
     def create_thread(identifier, title) # The identifier should be the URL if possible
-      response = session.api.thread_by_identifier(forum_api_key, identifier, title)
+      response = API.thread_by_identifier(forum_api_key, identifier, title)
       raise Error(response['message']) if response['succeeded'].nil?
       new_thread = Thread.from_hash(response['thread'], self)
       @threads << new_thread if @threads
@@ -57,7 +53,7 @@ module Disqussion
     # one Thread without retrieving all the threads for a forum.
     def find_thread_by_url(url)
       return @threads.find_by_slug(url) if @threads
-      response = session.api.get_thread_by_url(forum_api_key, url)
+      response = API.get_thread_by_url(forum_api_key, url)
       raise Error(response['message']) if response['succeeded'].nil?
       Thread.from_hash(response['thread'], self)
     end
@@ -72,17 +68,15 @@ module Disqussion
       thread
     end
 
-    # Override inspect because of the circular dependencies. Otherwise
-    # Discussion is unusable in irb.
-    def inspect
-      "#{id} - #{shortname}"
-    end
-
     private
+
+    def default_hash
+      { 'user_key' => user_key, 'forum_key' => forum_key }
+    end
 
     # Retrieves the forum's api_key from the API object.
     def retrieve_forum_key
-      msg = session.api.get_forum_api_key(session.user_key, id)
+      msg = API.get_forum_api_key(user_key, id)
       if msg && msg['succeeded']
         return msg['message']
       end
@@ -91,11 +85,11 @@ module Disqussion
 
     # Retrieves the Thread array from the API.
     def retrieve_threads
-      msg = session.api.get_thread_list(forum_key)
+      msg = API.get_thread_list(forum_key)
       if msg && msg['succeeded']
         threads = []
         msg['message'].each do |thread_hash|
-          threads << Thread.from_hash(thread_hash, self)
+          threads << Thread.new(thread_hash.merge(default_hash))
         end
         return threads
       end

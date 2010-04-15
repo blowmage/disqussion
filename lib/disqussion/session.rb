@@ -21,25 +21,19 @@ module Disqussion
       key
     end
 
-    attr_writer :user_key, :api
+    attr_writer :user_key
 
     # Retrieve the Disqus user_key, finding the default if neccessary.
     def user_key
       @user_key ||= Session.default_user_key!
-    end
-    # Retrieving or creating the API object for the Session.
-    def api
-      @api ||= API.new
     end
     alias :user_api_key :user_key
     alias :user_api_key= :user_key=
 
     # A new instance of Session.
     # @param [String, #user_key] Disqus user_key
-    # @param [String, #api] API instance
-    def initialize(user_key = nil, api = nil)
+    def initialize(user_key = nil)
       user_key = @user_key if user_key
-      @api = api if api
     end
 
     # Returns all the user's forums.
@@ -66,13 +60,17 @@ module Disqussion
 
     private
 
+    def default_hash
+      { 'user_key' => user_key }
+    end
+
     # Retrieves the Forum array from the API.
     def retrieve_forums
-      msg = api.get_forum_list(user_key)
+      msg = API.get_forum_list(user_key)
       if msg && msg['succeeded']
         forums = []
         msg['message'].each do |forum_hash|
-          forums << Forum.from_hash(forum_hash, self)
+          forums << Forum.new(forum_hash.merge(default_hash))
         end
         return forums
       end
