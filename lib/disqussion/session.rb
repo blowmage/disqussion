@@ -59,8 +59,8 @@ module Disqussion
     #  rubiverse  = disqus['123456']
     #  blowmage   = disqus['blowmage']
     def [](identifier)
-      forum = forums.find_by_id(identifier)
-      forum = forums.find_by_shortname(identifier) if forum.nil?
+      forum = forums.find {|f| f.id == identifier }
+      forum = forums.find {|f| f.shortname == identifier } if forum.nil?
       forum
     end
 
@@ -73,13 +73,6 @@ module Disqussion
         forums = []
         msg['message'].each do |forum_hash|
           forums << Forum.from_hash(forum_hash, self)
-        end
-        # Monkey-patch helper methods
-        def forums.find_by_id(id)
-          find {|f| f.id == id }
-        end
-        def forums.find_by_shortname(shortname)
-          find {|f| f.shortname == shortname }
         end
         return forums
       end

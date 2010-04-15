@@ -64,15 +64,7 @@ Disqussion.new.forums.each do |forum|
   puts "  forum: #{forum.id} (#{forum.shortname}) - #{forum.name}"
 end</code></pre>
 
-If you want to find a specific Forum you can use the following helper methods added to Session.forums array.
-
-<pre><code>require 'disqussion'
-
-disqus     = Disqussion.new
-rubiverse  = disqus.forums.find_by_id('123456')
-blowmage   = disqus.forums.find_by_shortname('blowmage')</code></pre>
-
-Although the easier way is to use the Session#[] helper passing in either the forum ID or the shortname.
+If you want to find a specific Forum you can use the Session#[] helper passing in either the forum ID or the shortname.
 
 <pre><code>require 'disqussion'
 
@@ -92,16 +84,7 @@ Disqussion.new['blowmage'].threads.each do |thread|
   puts "  thread: #{thread.id} (#{thread.slug}) - #{thread.title}"
 end</code></pre>
 
-If you want to find a specific Thread you can use the following helper methods added to Forum.threads array.
-
-<pre><code>require 'disqussion'
-
-disqus       = Disqussion.new
-blowmage     = disqus['blowmage']
-random_page  = blowmage.threads.find_by_id('345678')
-another_page = blowmage.threads.find_by_slug('announcing-disqussion')</code></pre>
-
-Although the easier way is to use the Forum#[] helper passing in either the thread ID or the slug.
+If you want to find a specific Thread you can use the Forum#[] helper passing in either the thread ID or the slug.
 
 <pre><code>require 'disqussion'
 
@@ -123,16 +106,7 @@ Disqussion.new['blowmage']['announcing-disqussion'].posts.each do |post|
   puts "  #{post.message}\n"
 end</code></pre>
 
-If you want to find a specific Post you can use the following helper method added to Thread.posts array.
-
-<pre><code>require 'disqussion'
-
-disqus   = Disqussion.new
-blowmage = disqus['blowmage']
-page     = blowmage['announcing-disqussion']
-comment  = page.posts.find_by_id('567890')</code></pre>
-
-Although the easier way is to use the Thread#[] helper passing in post ID.
+If you want to find a specific Post you can  the Thread#[] helper passing in post ID.
 
 <pre><code>require 'disqussion'
 

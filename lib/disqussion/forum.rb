@@ -67,8 +67,8 @@ module Disqussion
     #  disqus       = Disqussion.new
     #  blowmage     = disqus['blowmage']
     def [](identifier)
-      thread = threads.find_by_id(identifier)
-      thread = threads.find_by_slug(identifier) if thread.nil?
+      thread = threads.find {|t| t.id == identifier }
+      thread = threads.find {|t| t.slug == identifier } if thread.nil?
       thread
     end
 
@@ -97,17 +97,6 @@ module Disqussion
         msg['message'].each do |thread_hash|
           threads << Thread.from_hash(thread_hash, self)
         end
-        # Monkey-patch helper methods
-        def threads.find_by_id(id)
-          find {|t| t.id == id }
-        end
-        def threads.find_by_slug(slug)
-          find {|t| t.slug == slug }
-        end
-        #def threads.add(identifier, title)
-        #    # TODO: Can we get a reference to the forum object here?
-        #    forum.create_thread(identifier, title)
-        # end
         return threads
       end
       nil

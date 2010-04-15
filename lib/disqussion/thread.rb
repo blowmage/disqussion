@@ -76,7 +76,7 @@ module Disqussion
     #  disqus   = Disqussion.new
     #  page     = disqus['blowmage']['announcing-disqussion']
     def [](identifier)
-      posts.find_by_id(identifier)
+      posts.find {|t| t.id == identifier }
     end
 
     # Override inspect because of the circular dependencies. Otherwise
@@ -91,57 +91,17 @@ module Disqussion
 
     private
 
-    # def retrieve_posts
-    #   msg = forum.session.api.get_thread_posts(forum.forum_key, id)
-    #   if msg && msg['succeeded']
-    #     posts = []
-    #     msg['message'].each do |post_hash|
-    #       posts << Post.from_hash(post_hash, self)
-    #     end
-    #     # Monkey-patch helper methods
-    #     def posts.find_by_id(id)
-    #       find {|t| t.id == id }
-    #     end
-    #     #def post.add(message, author_name, author_email, author_url = nil, ip_address = nil, created_at = nil)
-    #     #    # TODO: Can we get a reference to the thread object here?
-    #     #    thread.create_post(message, author_name, author_email, author_url, ip_address, created_at)
-    #     # end
-    #     return posts
-    #   end
-    #   nil
-    # end
-
     # Retrieves the Post array from the API.
     def retrieve_posts
       msg = forum.session.api.get_thread_posts(forum.forum_key, id)
       if msg && msg['succeeded']
-        posts = new_post_array
+        posts = []
         msg['message'].each do |post_hash|
           posts << Post.from_hash(post_hash, self)
         end
         return posts
       end
       nil
-    end
-
-    # Creates a new array with the proper methods monkey-patched in.
-    def new_post_array
-      posts = []
-      # Add reference to thread
-      def posts.thread
-        self # will this return the thread or the array?
-      end
-
-      # Add create new post helper method
-      def post.add(message, author_name, author_email, author_url = nil, ip_address = nil, created_at = nil)
-         # Use the reference to the thread added earlier
-         thread.create_post(message, author_name, author_email, author_url, ip_address, created_at)
-      end
-      # Add finder helper methods
-      def posts.find_by_id(id)
-        find {|t| t.id == id }
-      end
-      return posts
     end
   end
 end
