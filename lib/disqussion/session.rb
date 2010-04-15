@@ -42,15 +42,7 @@ module Disqussion
 
     # Retrieves the Forum array from the API.
     def retrieve_forums
-      msg = API.get_forum_list(user_key)
-      if msg && msg['succeeded']
-        forums = []
-        msg['message'].each do |forum_hash|
-          forums << Forum.new(forum_hash.merge(default_hash))
-        end
-        return forums
-      end
-      nil
+      API.get_forum_list(user_key).map { |f| Forum.new(f.merge(default_hash)) }
     end
 
   end

@@ -62,11 +62,10 @@ module Disqussion
     end
 
     # Create a new post from a long list of method parameters. So sad.
-    def create_post(message, author_name, author_email, author_url = nil, ip_address = nil, created_at = nil) # The identifier should be the URL if possible
-      # law of demeter? pshaw!
-      response = API.create_post(forum_key, id, message, author_name, author_email, author_url, ip_address, created_at)
-      raise Error(response['message']) if response['succeeded'].nil?
-      new_post = Post.from_hash(response['post'], self)
+    # The identifier should be the URL if possible
+    def create_post(message, author_name, author_email, author_url = nil, ip_address = nil, created_at = nil)
+      new_post_hash = API.create_post(forum_key, id, message, author_name, author_email, author_url, ip_address, created_at)
+      new_post = Post.new(new_post_hash.merge(default_hash))
       @posts << new_post if @posts
       new_post
     end
@@ -88,7 +87,7 @@ module Disqussion
 
     # Gets the parent post of a post.
     def parent_of(post)
-      [post.parent_post]
+      posts.find {|t| t.id == post.parent_post }
     end
 
     # Gets the child posts of a post.
@@ -98,17 +97,13 @@ module Disqussion
 
     private
 
+    def default_hash
+      { 'user_key' => user_key, 'forum_key' => forum_key }
+    end
+
     # Retrieves the Post array from the API.
     def retrieve_posts
-      msg = API.get_thread_posts(forum_key, id)
-      if msg && msg['succeeded']
-        posts = []
-        msg['message'].each do |post_hash|
-          posts << Post.new(post_hash)
-        end
-        return posts
-      end
-      nil
+      API.get_thread_posts(forum_key, id).map { |p| Post.new(p.merge(default_hash)) }
     end
   end
 end

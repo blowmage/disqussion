@@ -228,16 +228,26 @@ module Disqussion
     
     def self.get(method, params = {})
       uri = URI.parse("http://disqus.com/api/#{method}/?#{hash_to_query(params)}")
-      # should we raise an error is response.code != 200?
-      # or if JSON(response.body)['code'] != 'ok'
-      JSON.parse(Net::HTTP.get(uri))
+      validate_response(Net::HTTP.get(uri))
     end
     
     def self.post(method, params = {})
       uri = URI.parse("http://disqus.com/api/#{method}/")
-      # should we raise an error is response.code != 200?
-      # or if JSON(response.body)['code'] != 'ok'
-      JSON.parse(Net::HTTP.post_form(uri, params).body)
+      validate_response(Net::HTTP.post_form(uri, params).body)
+    end
+
+    def self.validate_response(str)
+      response = JSON.parse(str)
+      # TODO: Make this a proper error object
+      raise 'Missing "code" from response.' unless response.has_key?('code')
+      raise 'Missing "succeeded" from response.' unless response.has_key?('succeeded')
+      raise 'Missing "message" from response.' unless response.has_key?('message')
+      if !response['succeeded']
+        raise "#{response['message']} - #{response['code']}"
+      end
+      response['message']
+    rescue JSON::ParserError
+      raise 'Unable to parse response text from discus.'
     end
 
     def self.hash_to_query(hsh)

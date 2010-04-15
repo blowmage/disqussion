@@ -45,9 +45,8 @@ module Disqussion
     end
 
     def create_thread(identifier, title) # The identifier should be the URL if possible
-      response = API.thread_by_identifier(forum_api_key, identifier, title)
-      raise Error(response['message']) if response['succeeded'].nil?
-      new_thread = Thread.from_hash(response['thread'], self)
+      new_thread_hash = API.thread_by_identifier(forum_api_key, identifier, title)
+      new_thread = Thread.new(new_thread_hash.merge(default_hash))
       @threads << new_thread if @threads
       new_thread
     end
@@ -59,9 +58,7 @@ module Disqussion
     # one Thread without retrieving all the threads for a forum.
     # Not reccomended, use find_thread_by_identifier instead.
     def find_thread_by_url(url)
-      response = API.get_thread_by_url(forum_api_key, url)
-      raise Error(response['message']) if response['succeeded'].nil?
-      Thread.from_hash(response['thread'], self)
+      Thread.new(API.get_thread_by_url(forum_api_key, url).merge(default_hash))
     end
 
     # Create or retrieve a thread by an arbitrary identifying string of your choice.
@@ -80,9 +77,7 @@ module Disqussion
     #
     # @return [Thread]
     def find_thread_by_identifier(identifier, title)
-        response = API.thread_by_identifier(forum_api_key, identifier, title)
-        raise Error(response['message']) if response['succeeded'].nil?
-        Thread.from_hash(response['thread'], self)
+        Thread.new(API.thread_by_identifier(forum_api_key, identifier, title).merge(default_hash))
       end
 
     # Find a thread by either it's identifier or slug.
@@ -103,24 +98,13 @@ module Disqussion
 
     # Retrieves the forum's api_key from the API object.
     def retrieve_forum_key
-      msg = API.get_forum_api_key(user_key, id)
-      if msg && msg['succeeded']
-        return msg['message']
-      end
-      nil
+      API.get_forum_api_key(user_key, id)
     end
 
     # Retrieves the Thread array from the API.
     def retrieve_threads
-      msg = API.get_thread_list(forum_key)
-      if msg && msg['succeeded']
-        threads = []
-        msg['message'].each do |thread_hash|
-          threads << Thread.new(thread_hash.merge(default_hash))
-        end
-        return threads
-      end
-      nil
+      API.get_thread_list(forum_key).map { |t| Thread.new(t.merge(default_hash)) }
     end
+
   end
 end

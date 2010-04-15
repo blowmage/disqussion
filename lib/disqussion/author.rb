@@ -4,12 +4,12 @@ module Disqussion
     
     # Creates a new Author instance from a hash of values.
     #
-    #  post = Author.from_hash({'id' => '12345'
-    #                           'username' => 'someguy'
-    #                           'name' => 'Just some guy'
-    #                           'url' => 'http://someguy.com/'
-    #                           'email_hash' => '...'
-    #                           'has_avatar' => true})
+    #  post = Author.new({ 'id' => '12345'
+    #                      'username' => 'someguy'
+    #                      'name' => 'Just some guy'
+    #                      'url' => 'http://someguy.com/'
+    #                      'email_hash' => '...'
+    #                      'has_avatar' => true })
     #                         
     # @param [Hash] Author
     #   the values to create the Post with
