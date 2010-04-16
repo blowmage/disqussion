@@ -49,18 +49,6 @@ module Disqussion
       @posts ||= retrieve_posts
     end
 
-    # Clears the list of posts.
-    def clear!
-      @posts = nil
-    end
-
-    # Returns all the thread's parent posts. Useful for navigating the
-    # posts in a threaded manner.
-    # @return [Array<Post>] a list of the parent posts
-    def parent_posts
-      posts.find_all {|p| p.parent_post.nil? }
-    end
-
     # Create a new post from a long list of method parameters. So sad.
     # The identifier should be the URL if possible
     def create_post(message, author_name, author_email, author_url = nil, ip_address = nil, created_at = nil)
@@ -69,9 +57,6 @@ module Disqussion
       @posts << new_post if @posts
       new_post
     end
-    alias :add_post :create_post
-    alias :new_post :create_post
-    alias :<< :create_post
 
     # Find a post by either it's identifier.
     #
@@ -81,8 +66,11 @@ module Disqussion
       posts.find {|t| t.id == identifier }
     end
 
-    def update
-      API.update_thread(forum_key, id, title, slug, allow_comments)
+    # Returns all the thread's parent posts. Useful for navigating the
+    # posts in a threaded manner.
+    # @return [Array<Post>] a list of the parent posts
+    def parent_posts
+      posts.find_all {|p| p.parent_post.nil? }
     end
 
     # Gets the parent post of a post.
@@ -93,6 +81,15 @@ module Disqussion
     # Gets the child posts of a post.
     def children_of(post)
       posts.find_all {|t| t.parent_post == post.id }
+    end
+
+    def update
+      API.update_thread(forum_key, id, title, slug, allow_comments)
+    end
+
+    # Clears the list of posts.
+    def clear!
+      @posts = nil
     end
 
     def inspect

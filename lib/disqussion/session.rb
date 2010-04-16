@@ -19,7 +19,6 @@ module Disqussion
 
     # Clears the list of forums.
     def clear!
-      @forums.clear! if @forums
       @forums = nil
     end
 

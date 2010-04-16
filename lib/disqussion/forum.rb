@@ -24,8 +24,6 @@ module Disqussion
     # name: a string for displaying the forum's full title, like "The Eyeball Kid's Blog".
 
     attr_accessor :user_key, :id, :shortname, :name
-    alias :short_name :shortname
-    alias :short_name= :shortname=
 
     # Retrieve the Disqus forum_api_key, finding the value  if neccessary.
     def forum_key
@@ -40,7 +38,6 @@ module Disqussion
 
     # Clears the list of threads.
     def clear!
-      @threads.clear! if @threads
       @threads = nil
     end
 
@@ -73,9 +70,6 @@ module Disqussion
       new_thread
     end
     alias :create_thread :find_thread_by_identifier
-    alias :add_thread :find_thread_by_identifier
-    alias :new_thread :find_thread_by_identifier
-    alias :<< :find_thread_by_identifier
 
     # Find a thread by either it's identifier or slug.
     #
