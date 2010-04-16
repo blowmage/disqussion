@@ -28,8 +28,8 @@ module Disqussion
     #  rubiverse  = disqus['123456']
     #  blowmage   = disqus['blowmage']
     def [](identifier)
-      forum = forums.find {|f| f.id == identifier }
-      forum = forums.find {|f| f.shortname == identifier } if forum.nil?
+      forum = forums.find { |f| f.id == identifier }
+      forum = forums.find { |f| f.shortname == identifier } if forum.nil?
       forum
     end
 

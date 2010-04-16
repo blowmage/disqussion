@@ -63,24 +63,24 @@ module Disqussion
     #  disqus   = Disqussion.new
     #  page     = disqus['blowmage']['announcing-disqussion']
     def [](identifier)
-      posts.find {|t| t.id == identifier }
+      posts.find { |t| t.id == identifier }
     end
 
     # Returns all the thread's parent posts. Useful for navigating the
     # posts in a threaded manner.
     # @return [Array<Post>] a list of the parent posts
     def parent_posts
-      posts.find_all {|p| p.parent_post.nil? }
+      posts.find_all { |p| p.parent_post.nil? }
     end
 
     # Gets the parent post of a post.
     def parent_of(post)
-      posts.find {|t| t.id == post.parent_post }
+      posts.find { |t| t.id == post.parent_post }
     end
 
     # Gets the child posts of a post.
     def children_of(post)
-      posts.find_all {|t| t.parent_post == post.id }
+      posts.find_all { |t| t.parent_post == post.id }
     end
 
     def update

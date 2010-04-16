@@ -76,8 +76,8 @@ module Disqussion
     #  disqus       = Disqussion.new
     #  blowmage     = disqus['blowmage']
     def [](identifier)
-      thread = threads.find {|t| t.id == identifier }
-      thread = threads.find {|t| t.slug == identifier } if thread.nil?
+      thread = threads.find { |t| t.id == identifier }
+      thread = threads.find { |t| t.slug == identifier } if thread.nil?
       thread
     end
 
